@@ -6,7 +6,7 @@ type ActivityKind = "Had a cigarette" | "Set of push-ups";
 
 type BaseActivity<T extends ActivityKind> = {
   date: UTCDate;
-  kind: T;
+  type: T;
 };
 
 export type Activity =
