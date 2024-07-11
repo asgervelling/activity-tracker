@@ -1,22 +1,24 @@
 #!/usr/bin/env node
-import { input } from "@inquirer/prompts";
+import { input, select } from "@inquirer/prompts";
+import { getActivity } from "./commands/addEntry.js";
 
-const answer = await input({ message: "Enter your name" });
-
-// Fun exercise
-type Primitive = string | number | boolean | null;
-type FormatA = { key: string; value: Primitive };
-type FormatB = {
-  [key: string]: Primitive;
-};
-
-function aToB(a: FormatA): FormatB {
-  return {
-    [a.key]: a.value,
-  };
+enum Command {
+  AddEntry = "AddEntry",
+  CreateActivityType = "CreateActivityType",
 }
 
-function bToA(b: FormatB): FormatA {
-  const [key, value] = Object.entries(b)[0];
-  return { key, value };
+const command = await select({
+  message: "",
+  choices: [
+    { name: "Add an activity entry", value: Command.AddEntry },
+    // { name: "Create a new type of activity", value: "CreateActivityType" }, // Not yet
+  ],
+});
+
+if (command !== Command.AddEntry) {
+  console.log("Only one command, AddEntry, supported for now");
+  process.exit(1);
 }
+
+const activity = await getActivity();
+console.log(JSON.stringify(activity, null, 2));
