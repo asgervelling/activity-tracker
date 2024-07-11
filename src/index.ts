@@ -1,24 +1,33 @@
 #!/usr/bin/env node
-import { input, select } from "@inquirer/prompts";
+import { select } from "@inquirer/prompts";
 import { getActivity } from "./commands/addEntry.js";
+import { getActivityConfig } from "./commands/createActivityType.js";
 
 enum Command {
   AddEntry = "AddEntry",
   CreateActivityType = "CreateActivityType",
 }
 
-const command = await select({
-  message: "",
-  choices: [
-    { name: "Add an activity entry", value: Command.AddEntry },
-    // { name: "Create a new type of activity", value: "CreateActivityType" }, // Not yet
-  ],
-});
+async function run() {
+  const command = await select({
+    message: "",
+    choices: [
+      { name: "Add an activity entry", value: Command.AddEntry },
+      {
+        name: "Create a new type of activity",
+        value: Command.CreateActivityType,
+      },
+    ],
+  });
 
-if (command !== Command.AddEntry) {
-  console.log("Only one command, AddEntry, supported for now");
-  process.exit(1);
+  switch (command) {
+    case Command.AddEntry:
+      const activity = await getActivity();
+      console.log(JSON.stringify(activity, null, 2));
+    case Command.CreateActivityType:
+      const activityType = await getActivityConfig();
+      console.log(JSON.stringify(activityType, null, 2));
+  }
 }
 
-const activity = await getActivity();
-console.log(JSON.stringify(activity, null, 2));
+run();
