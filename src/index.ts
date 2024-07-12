@@ -4,6 +4,7 @@ import { getActivity } from "./commands/addEntry.js";
 import { getActivityConfig } from "./commands/createActivityType.js";
 import { generateCode } from "./commands/emulate/activities/pushups/SetOfPushUpsActivity.js";
 import _ from "lodash";
+import { getOrGenerateUserConfig } from "./userConfig.js";
 
 enum Command {
   AddEntry = "AddEntry",
@@ -11,6 +12,8 @@ enum Command {
 }
 
 async function run() {
+  const userConfig = getOrGenerateUserConfig();
+
   const command = await select({
     message: "",
     choices: [
