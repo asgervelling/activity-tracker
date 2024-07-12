@@ -1,34 +1,56 @@
 import ts, { factory } from "typescript";
+import { ActivityConfig, FieldConfig } from "../../../../createActivityType.js";
+import _ from "lodash";
 
-export function activityType() {
+function pascalCase(s: string) {
+  return _.startCase(_.camelCase(s)).replace(/\s/g, "");
+}
+
+export function activityType(a: ActivityConfig) {
   return factory.createTypeAliasDeclaration(
     [factory.createToken(ts.SyntaxKind.ExportKeyword)],
-    factory.createIdentifier("SetOfPushUpsActivity"),
+    factory.createIdentifier(pascalCase(a.name)),
     undefined,
     factory.createTypeLiteralNode([
       factory.createPropertySignature(
         undefined,
         factory.createIdentifier("type"),
         undefined,
-        factory.createLiteralTypeNode(
-          factory.createStringLiteral("Set of push-ups")
-        )
+        factory.createLiteralTypeNode(factory.createStringLiteral(a.name))
       ),
-      factory.createPropertySignature(
+      ...a.fields.map(createPropertySignature),
+    ])
+  );
+}
+
+function createPropertySignature(field: FieldConfig) {
+  const identifier = _.camelCase(field.name);
+
+  switch (field.inputType) {
+    case "Date":
+      return factory.createPropertySignature(
         undefined,
-        factory.createIdentifier("date"),
+        factory.createIdentifier(identifier),
         undefined,
         factory.createTypeReferenceNode(
           factory.createIdentifier("UTCDate"),
           undefined
         )
-      ),
-      factory.createPropertySignature(
+      );
+    case "number":
+    case "boolean":
+    case "string":
+      return factory.createPropertySignature(
         undefined,
-        factory.createIdentifier("repetitions"),
+        factory.createIdentifier(identifier),
         undefined,
-        factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword)
-      ),
-    ])
-  );
+        factory.createKeywordTypeNode(
+          field.inputType === "number"
+            ? ts.SyntaxKind.NumberKeyword
+            : field.inputType === "boolean"
+            ? ts.SyntaxKind.BooleanKeyword
+            : ts.SyntaxKind.StringKeyword
+        )
+      );
+  }
 }

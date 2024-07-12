@@ -3,11 +3,13 @@ import _ from "lodash";
 
 const inputTypes = ["number", "string", "boolean", "Date"] as const;
 type InputType = (typeof inputTypes)[number];
-type FieldConfig = {
+
+export type FieldConfig = {
   name: string;
   inputType: InputType;
 };
-type ActivityConfig = {
+
+export type ActivityConfig = {
   name: string;
   fields: FieldConfig[];
 };
@@ -19,19 +21,24 @@ export async function getActivityConfig(): Promise<ActivityConfig> {
 }
 
 async function getFieldConfigs(): Promise<FieldConfig[]> {
-  const addFields = await confirm({
-    message: "Would you like to add additional fields?",
-    default: false,
-  });
+  async function recInner(): Promise<FieldConfig[]> {
+    const addFields = await confirm({
+      message: "Would you like to add additional fields?",
+      default: false,
+    });
 
-  if (!addFields) return [];
+    if (!addFields) return [];
 
-  const config = await getFieldConfig();
+    const config = await getFieldConfig();
 
-  // Present the newly created config to the user
-  console.log(JSON.stringify(config));
+    return [config, ...(await recInner())];
+  }
 
-  return [config, ...(await getFieldConfigs())];
+  const dateField: FieldConfig = {
+    name: "Date",
+    inputType: "Date",
+  };
+  return [dateField, ...(await recInner())];
 }
 
 async function getFieldConfig(): Promise<FieldConfig> {

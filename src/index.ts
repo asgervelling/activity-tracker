@@ -2,6 +2,8 @@
 import { select } from "@inquirer/prompts";
 import { getActivity } from "./commands/addEntry.js";
 import { getActivityConfig } from "./commands/createActivityType.js";
+import { generateCode } from "./commands/emulate/activities/pushups/SetOfPushUpsActivity.js";
+import _ from "lodash";
 
 enum Command {
   AddEntry = "AddEntry",
@@ -25,8 +27,10 @@ async function run() {
       const activity = await getActivity();
       console.log(JSON.stringify(activity, null, 2));
     case Command.CreateActivityType:
-      const activityType = await getActivityConfig();
-      console.log(JSON.stringify(activityType, null, 2));
+      const activityConfig = await getActivityConfig();
+      console.log(JSON.stringify(activityConfig, null, 2));
+      console.log();
+      generateCode(activityConfig);
   }
 }
 
