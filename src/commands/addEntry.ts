@@ -1,3 +1,4 @@
+import * as E from "fp-ts/Either";
 import { number, select } from "@inquirer/prompts";
 import { Activity, activityTypes } from "../activities.js";
 import { UTCDate } from "@date-fns/utc";

@@ -13,6 +13,6 @@ const localDate = toZonedTime(utcDateExample, userTimezone);
 
 const fmt = (d: UTCDate | Date) => format(d, "yyyy-MM-dd hh:mm");
 
-console.log(`UTC Date: ${fmt(utcDateExample)}`);
-console.log(`User Timezone: ${userTimezone}`);
-console.log(`Local Date: ${fmt(localDate)}`);
+// console.log(`UTC Date: ${fmt(utcDateExample)}`);
+// console.log(`User Timezone: ${userTimezone}`);
+// console.log(`Local Date: ${fmt(localDate)}`);
