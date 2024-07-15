@@ -12,7 +12,7 @@ enum Command {
 }
 
 async function run() {
-  const userConfig = getOrGenerateUserConfig();
+  // const userConfig = getOrGenerateUserConfig();
 
   const command = await select({
     message: "",

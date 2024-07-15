@@ -1,5 +1,6 @@
 import { confirm, input, select } from "@inquirer/prompts";
 import _ from "lodash";
+import * as E from "fp-ts/lib/Either.js";
 
 const inputTypes = ["number", "string", "boolean", "Date"] as const;
 type InputType = (typeof inputTypes)[number];
@@ -15,9 +16,23 @@ export type ActivityConfig = {
 };
 
 export async function getActivityConfig(): Promise<ActivityConfig> {
-  const name = await input({ message: "Name of activity:" });
+  const name = await getInput({ message: "Name of activity:" });
+  if (name._tag === "Left") {
+    throw new Error("Temporary error while refactoring");
+  }
   const fields = await getFieldConfigs();
-  return { name, fields };
+  return { name: name.right, fields };
+}
+
+async function getInput(config: {
+  message: string;
+}): Promise<E.Either<string, string>> {
+  try {
+    const userInput = await input(config);
+    return E.right(userInput);
+  } catch (err) {
+    return E.left("Could not get user input");
+  }
 }
 
 async function getFieldConfigs(): Promise<FieldConfig[]> {
